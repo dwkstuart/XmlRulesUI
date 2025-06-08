@@ -3,9 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useDispatch } from 'react-redux';
+import { replaceRoot, defaultGroup } from '../ruleBuilderSlice';
 import BursaryRuleBuilder from './BursaryRuleBuilder';
 
 const BursaryFormPage: React.FC = () => {
+  const dispatch = useDispatch();
   const [awardName, setAwardName] = useState('');
   const [adminUser, setAdminUser] = useState('');
   const [xmlString, setXmlString] = useState('');
@@ -43,6 +46,12 @@ const BursaryFormPage: React.FC = () => {
       setFormError('Network or server error.');
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      dispatch(replaceRoot(defaultGroup()));
+    };
+  }, [dispatch]);
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 5, p: 3, border: '1px solid #eee', borderRadius: 2, background: '#fafafa' }}>

@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import BursaryRuleBuilder from './BursaryRuleBuilder';
 import { xmlToRules } from '../utils/xmlToRules'; // import the utility
+import { useDispatch } from 'react-redux';
+import { replaceRoot, defaultGroup } from '../ruleBuilderSlice';
 
 
 interface EditBursaryPageProps {
@@ -13,6 +15,7 @@ interface EditBursaryPageProps {
 }
 
 const EditBursaryPage: React.FC<EditBursaryPageProps> = ({ bursaryId, onBack }) => {
+  const dispatch = useDispatch();
   const [awardName, setAwardName] = useState('');
   const [adminUser, setAdminUser] = useState('');
   const [xmlString, setXmlString] = useState('');
@@ -106,11 +109,21 @@ const EditBursaryPage: React.FC<EditBursaryPageProps> = ({ bursaryId, onBack }) 
     }
   };
 
+  // Clear rules from state when navigating away
+  useEffect(() => {
+    return () => {
+      dispatch(replaceRoot(defaultGroup())); // Use empty group, not null
+    };
+  }, [dispatch]);
+
   if (loading) return <Typography>Loading...</Typography>;
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 5, p: 3, border: '1px solid #eee', borderRadius: 2, background: '#fafafa' }}>
-      <Button onClick={onBack} sx={{ mb: 2 }}>&larr; Back</Button>
+      <Button onClick={() => { 
+        if (onBack) onBack();
+        dispatch(replaceRoot(defaultGroup())); // Use empty group, not null
+      }} sx={{ mb: 2 }}>&larr; Back</Button>
       <Typography variant="h5" mb={2}>Edit Bursary Award</Typography>
       <form onSubmit={handleSubmit}>
         <TextField

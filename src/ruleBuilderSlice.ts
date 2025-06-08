@@ -140,4 +140,5 @@ export const {
   clearError,
   replaceRoot
 } = ruleBuilderSlice.actions;
+export { defaultGroup };
 export default ruleBuilderSlice.reducer;

@@ -29,6 +29,18 @@
       "awardName": "hello",
       "adminUser": "njjnf,dsn",
       "xmlString": "<?xml version=\"1.0\"?>\n<rules>\n  <group>\n    <logic>AND</logic>\n    <rule>\n      <name>dob</name>\n      <comparator>before</comparator>\n      <value>2025-06-27</value>\n    </rule>\n  </group>\n</rules>"
+    },
+    {
+      "id": 6,
+      "awardName": "dsfdsfdsfds ",
+      "adminUser": "jkjlkj",
+      "xmlString": "<?xml version=\"1.0\"?>\n<rules>\n  <group>\n    <logic>AND</logic>\n    <age>\n      <comparator>equals</comparator>\n      <value>90</value>\n    </age>\n  </group>\n</rules>"
+    },
+    {
+      "id": 7,
+      "awardName": "New Rule",
+      "adminUser": "david",
+      "xmlString": "<?xml version=\"1.0\"?>\n<rules>\n  <group>\n    <logic>AND</logic>\n    <age>\n      <comparator>equals</comparator>\n      <value>23</value>\n    </age>\n  </group>\n</rules>"
     }
   ]
 }
