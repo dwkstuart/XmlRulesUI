@@ -22,7 +22,7 @@ const App: React.FC = () => {
 const EditBursaryPageWrapper: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  return <EditBursaryPage bursaryId={Number(id)} onBack={() => navigate('/')} />;
+  return <EditBursaryPage bursaryId={Number(id)} onBack={() => navigate('/search')} />;
 };
 
 export default App;
