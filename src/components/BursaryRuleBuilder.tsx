@@ -3,7 +3,6 @@ import { create } from 'xmlbuilder2';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import {
-  xmlTypesConst,
   setRuleType,
   setComparator,
   setValue,
@@ -17,6 +16,7 @@ import {
   replaceRoot,
   RuleBlock
 } from '../ruleBuilderSlice';
+import { xmlTypesConst } from '../xmlTypes';
 import XmlOutput from './XmlOutput';
 import ErrorMessage from './ErrorMessage';
 // Material UI imports
@@ -199,8 +199,8 @@ const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, in
     const doc = create({ version: '1.0' }).ele('rules');
     function buildXmlBlock(block: RuleBlock, doc: import('xmlbuilder2/lib/interfaces').XMLBuilder): void {
       if (block.type === 'rule') {
-        const ruleElem = doc.ele('rule');
-        ruleElem.ele('name').txt(block.ruleType.value).up();
+        // Use the ruleType value as the XML element name
+        const ruleElem = doc.ele(block.ruleType.value);
         ruleElem.ele('comparator').txt(block.comparator.value).up();
         ruleElem.ele('value').txt(block.value).up();
         ruleElem.up();

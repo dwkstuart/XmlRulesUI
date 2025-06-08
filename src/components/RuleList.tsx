@@ -1,5 +1,6 @@
 import React from 'react';
 import { Rule } from '../ruleBuilderSlice';
+import { xmlTypes } from '../xmlTypes';
 import RuleRow from './RuleRow';
 
 interface RuleListProps {
@@ -10,11 +11,10 @@ interface RuleListProps {
   onValueChange: (idx: number, value: string) => void;
   onRemove: (idx: number) => void;
   onAdd: () => void;
-  xmlTypes: typeof import('../ruleBuilderSlice').xmlTypesConst;
 }
 
-const RuleList: React.FC<RuleListProps> = ({
-  rules, logic, onTypeChange, onComparatorChange, onValueChange, onRemove, onAdd, xmlTypes
+const RuleList: React.FC<Omit<RuleListProps, 'xmlTypes'>> = ({
+  rules, logic, onTypeChange, onComparatorChange, onValueChange, onRemove, onAdd
 }) => (
   <>
     <h2>Rules</h2>

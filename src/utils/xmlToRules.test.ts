@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { xmlToRules } from './xmlToRules';
-import { xmlTypes } from '../ruleBuilderSlice';
+import { xmlTypes } from '../xmlTypes';
 
 const simpleXml = `<?xml version="1.0"?>
 <rules>

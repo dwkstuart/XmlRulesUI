@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import { xmlTypes, RuleBlock } from '../ruleBuilderSlice';
+import { xmlTypes } from '../xmlTypes';
 
 type XmlGroup = {
   logic?: string | { '#text': string };
@@ -13,15 +13,15 @@ type XmlRule = {
   value: string;
 };
 
-export function xmlToRules(xmlString: string): RuleBlock {
+export function xmlToRules(xmlString: string) {
   const parser = new XMLParser({ ignoreAttributes: false });
   const jsObj = parser.parse(xmlString);
 
   // Helper to recursively convert XML to your rule/group format
-  function convertGroup(group: XmlGroup): RuleBlock {
+  function convertGroup(group: XmlGroup) {
     const logicRaw = typeof group.logic === 'object' ? group.logic['#text'] : group.logic || 'AND';
     const logic: 'AND' | 'OR' = logicRaw === 'OR' ? 'OR' : 'AND';
-    let children: RuleBlock[] = [];
+    let children: any[] = [];
 
     if (Array.isArray(group.rule)) {
       children = group.rule.map(convertRule);
@@ -42,7 +42,7 @@ export function xmlToRules(xmlString: string): RuleBlock {
     };
   }
 
-  function convertRule(rule: XmlRule): RuleBlock {
+  function convertRule(rule: XmlRule) {
     // Map ruleType and comparator to the correct objects from xmlTypes
     const ruleTypeObj = xmlTypes.find(t => t.value === rule.name) || xmlTypes[0];
     const comparatorObj = ruleTypeObj.comparators.find(c => c.value === rule.comparator) || ruleTypeObj.comparators[0];

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Rule } from '../ruleBuilderSlice';
+import { xmlTypesConst } from '../xmlTypes';
 
 interface RuleRowProps {
   rule: Rule;
@@ -10,12 +11,12 @@ interface RuleRowProps {
   onComparatorChange: (idx: number, compValue: string) => void;
   onValueChange: (idx: number, value: string) => void;
   onRemove: (idx: number) => void;
-  xmlTypes: typeof import('../ruleBuilderSlice').xmlTypesConst;
   disableRemove: boolean;
+  xmlTypes: typeof import('../xmlTypes').xmlTypes;
 }
 
 const RuleRow: React.FC<RuleRowProps> = ({
-  rule, idx, isLast, logic, onTypeChange, onComparatorChange, onValueChange, onRemove, xmlTypes, disableRemove
+  rule, idx, isLast, logic, onTypeChange, onComparatorChange, onValueChange, onRemove, disableRemove, xmlTypes
 }) => (
   <div style={{ border: '1px solid #ccc', margin: 8, padding: 8, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
     <label>
@@ -29,7 +30,7 @@ const RuleRow: React.FC<RuleRowProps> = ({
     <label>
       Comparator:
       <select value={rule.comparator.value} onChange={e => onComparatorChange(idx, e.target.value)} style={{ marginLeft: 8 }}>
-        {rule.type.comparators.map(comp => (
+        {rule.type.comparators.map((comp: { label: string; value: string }) => (
           <option key={comp.value} value={comp.value}>{comp.label}</option>
         ))}
       </select>
