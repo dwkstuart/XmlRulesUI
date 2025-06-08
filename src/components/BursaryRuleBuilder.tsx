@@ -161,9 +161,10 @@ const GroupBlock: React.FC<{
 interface BursaryRuleBuilderProps {
   onXmlChange?: (xml: string) => void;
   initialRules?: RuleBlock | null;
+  onBuildXml?: (xml: string) => void;
 }
 
-const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, initialRules }) => {
+const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, initialRules, onBuildXml }) => {
   const dispatch = useDispatch();
   const root = useSelector((state: RootState) => state.ruleBuilder.root);
   const xml = useSelector((state: RootState) => state.ruleBuilder.xml);
@@ -186,13 +187,27 @@ const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, in
       if (typeof block.value === 'string' && !block.value.trim()) return true;
       return false;
     }
+    // If group has no children, it's empty
+    if (!block.children || block.children.length === 0) return true;
     return block.children.some((child) => hasEmptyValue(child));
   }
 
+  function hasAtLeastOneRule(block: RuleBlock): boolean {
+    if (block.type === 'rule') return true;
+    return block.children.some(child => hasAtLeastOneRule(child));
+  }
+
   const buildXml = () => {
+    if (!hasAtLeastOneRule(root)) {
+      dispatch(setError('At least one rule is required before building XML.'));
+      dispatch(setXml(''));
+      if (onBuildXml) onBuildXml('');
+      return;
+    }
     if (hasEmptyValue(root)) {
       dispatch(setError('All rule values must be filled in before building XML.'));
       dispatch(setXml(''));
+      if (onBuildXml) onBuildXml('');
       return;
     }
     dispatch(clearError());
@@ -212,7 +227,9 @@ const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, in
       }
     }
     buildXmlBlock(root, doc);
-    dispatch(setXml(doc.end({ prettyPrint: true })));
+    const xmlString = doc.end({ prettyPrint: true });
+    dispatch(setXml(xmlString));
+    if (onBuildXml) onBuildXml(xmlString);
   };
 
   return (

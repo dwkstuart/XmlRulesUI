@@ -10,7 +10,7 @@
       "id": 2,
       "awardName": "dssfdsfsd",
       "adminUser": "sdsad",
-      "xmlString": "<?xml version=\"1.0\"?>\n<rules>\n  <group>\n    <logic>AND</logic>\n    <rule>\n      <name>dob</name>\n      <comparator>before</comparator>\n      <value>2025-06-19</value>\n    </rule>\n  </group>\n</rules>"
+      "xmlString": "<?xml version=\"1.0\"?>\n<rules>\n  <group>\n    <logic>AND</logic>\n    <age>\n      <comparator>equals</comparator>\n      <value>23</value>\n    </age>\n  </group>\n</rules>"
     },
     {
       "id": 3,
