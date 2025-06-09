@@ -116,6 +116,50 @@ app.put('/bursaries/:id', async (req, res) => {
   }
 });
 
+// --- User registration ---
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+  try {
+    const db = await getDb();
+    const users = db.collection('users');
+    const existing = await users.findOne({ username });
+    if (existing) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+    // Basic hash (not for production!)
+    const hash = Buffer.from(password).toString('base64');
+    const result = await users.insertOne({ username, password: hash });
+    res.json({ success: true, id: result.insertedId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// --- User login ---
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+  try {
+    const db = await getDb();
+    const users = db.collection('users');
+    const hash = Buffer.from(password).toString('base64');
+    const user = await users.findOne({ username, password: hash });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    res.json({ success: true, username });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);
 });
