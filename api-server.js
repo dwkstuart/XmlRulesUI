@@ -56,7 +56,28 @@ app.get('/bursaries', async (req, res) => {
     const db = await getDb();
     const bursaries = db.collection('bursaries');
     const all = await bursaries.find({}).toArray();
-    res.json(all);
+    // Map _id to id for frontend compatibility (as string)
+    const mapped = all.map(b => ({ ...b, id: b._id.toString() }));
+    res.json(mapped);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// GET /bursaries/:id - return a single bursary by id
+app.get('/bursaries/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log(`Fetching bursary with id: ${id}`);
+  try {
+    const db = await getDb();
+    const bursaries = db.collection('bursaries');
+    const bursary = await bursaries.findOne({ _id: new ObjectId(id) });
+    if (!bursary) {
+      return res.status(404).json({ error: 'Bursary not found' });
+    }
+    // Map _id to id for frontend compatibility (as string)
+    res.json({ ...bursary, id: bursary._id.toString() });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });

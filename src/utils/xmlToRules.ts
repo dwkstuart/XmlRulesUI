@@ -23,10 +23,23 @@ export function xmlToRules(xmlString: string) {
     const logic: 'AND' | 'OR' = logicRaw === 'OR' ? 'OR' : 'AND';
     let children: any[] = [];
 
+    // Handle <rule> elements (old format)
     if (Array.isArray(group.rule)) {
       children = group.rule.map(convertRule);
     } else if (group.rule) {
       children = [convertRule(group.rule)];
+    }
+
+    // Handle direct rule-type elements (new format)
+    for (const type of xmlTypes) {
+      const ruleBlock = group[type.value];
+      if (ruleBlock) {
+        if (Array.isArray(ruleBlock)) {
+          children = children.concat(ruleBlock.map(rb => convertRule({ ...rb, name: type.value })));
+        } else {
+          children.push(convertRule({ ...ruleBlock, name: type.value }));
+        }
+      }
     }
 
     if (Array.isArray(group.group)) {

@@ -10,7 +10,7 @@ import { replaceRoot, defaultGroup } from '../ruleBuilderSlice';
 
 
 interface EditBursaryPageProps {
-  bursaryId: number;
+  bursaryId: string;
   onBack: () => void;
 }
 
@@ -28,18 +28,28 @@ const EditBursaryPage: React.FC<EditBursaryPageProps> = ({ bursaryId, onBack }) 
 
   // Fetch bursary by id
   useEffect(() => {
+    
+    if (!bursaryId) {
+      setFormError('Invalid bursary ID');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    fetch(`http://localhost:4000/bursaries`)
-      .then(res => res.json())
-      .then((bursaries: Array<{ id: number; awardName: string; adminUser: string; xmlString: string }>) => {
-        const bursary = bursaries.find((b) => b.id === bursaryId);
-        if (bursary) {
-          setAwardName(bursary.awardName);
-          setAdminUser(bursary.adminUser);
-          setXmlString(bursary.xmlString);
-          setInitialRules(xmlToRules(bursary.xmlString));
+    setFormError('');
+    fetch(`http://localhost:4000/bursaries/${bursaryId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Not found');
+        return res.json();
+      })
+      .then((bursary: { id: string; awardName: string; adminUser: string; xmlString: string }) => {
+        setAwardName(bursary.awardName);
+        setAdminUser(bursary.adminUser);
+        setXmlString(bursary.xmlString);
+        const rules = xmlToRules(bursary.xmlString);
+        if (rules && (rules.type === 'group' || rules.type === 'rule')) {
+          setInitialRules(rules);
         } else {
-          setFormError('Bursary not found');
+          setInitialRules(null);
         }
         setLoading(false);
       })
@@ -47,18 +57,6 @@ const EditBursaryPage: React.FC<EditBursaryPageProps> = ({ bursaryId, onBack }) 
         setFormError('Failed to load bursary');
         setLoading(false);
       });
-  }, [bursaryId]);
-
-  // Reset state when bursaryId or component unmounts
-  useEffect(() => {
-    setAwardName('');
-    setAdminUser('');
-    setXmlString('');
-    setFormError('');
-    setSubmitted(false);
-    setLoading(true);
-    setInitialRules(null);
-    setXmlBuilt(false);
   }, [bursaryId]);
 
   // Reset xmlBuilt to false when rules change
@@ -143,7 +141,12 @@ const EditBursaryPage: React.FC<EditBursaryPageProps> = ({ bursaryId, onBack }) 
           sx={{ mb: 2 }}
         />
         <Box sx={{ my: 3 }}>
-          <BursaryRuleBuilder initialRules={initialRules} onXmlChange={handleXmlChange} onBuildXml={handleBuildXml} />
+          <BursaryRuleBuilder
+            key={bursaryId}
+            initialRules={initialRules}
+            onXmlChange={handleXmlChange}
+            onBuildXml={handleBuildXml}
+          />
         </Box>
         {formError && <Typography color="error" sx={{ mb: 2 }}>{formError}</Typography>}
         {submitted && <Typography color="success.main" sx={{ mb: 2 }}>Bursary updated!</Typography>}
