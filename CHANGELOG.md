@@ -75,3 +75,15 @@ This file is generated and updated automatically by the changelog workflow.
 
 
 
+## 0.1.0 (2025-06-09)
+
+* fix(deploy): update Railway deployment action to use cli-action@v1 ([fa2600d](https://github.com/dwkstuart/XmlRulesUI/commit/fa2600d))
+
+
+
+## 0.1.0 (2025-06-10)
+
+* feat(auth): add user registration and login functionality with basic validation (#18) ([f844c74](https://github.com/dwkstuart/XmlRulesUI/commit/f844c74)), closes [#18](https://github.com/dwkstuart/XmlRulesUI/issues/18)
+
+
+
