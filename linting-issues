@@ -1,0 +1,20 @@
+
+> xml-rules-ui@0.1.0 lint
+> npx eslint src --ext .ts,.tsx
+
+
+/home/runner/work/XmlRulesUI/XmlRulesUI/src/App.tsx
+  2:27  error  'Router' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/runner/work/XmlRulesUI/XmlRulesUI/src/components/BursaryRuleBuilder.tsx
+  178:5  error  Definition for rule 'react-hooks/exhaustive-deps' was not found  react-hooks/exhaustive-deps
+
+/home/runner/work/XmlRulesUI/XmlRulesUI/src/components/RuleRow.tsx
+  3:10  error  'xmlTypesConst' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/runner/work/XmlRulesUI/XmlRulesUI/src/utils/xmlToRules.ts
+  24:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 4 problems (4 errors, 0 warnings)
+
+No lint errors found.
