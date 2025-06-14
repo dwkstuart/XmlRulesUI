@@ -22,6 +22,11 @@ jobs:
           set -o pipefail
           npm run lint | tee linting-issues || true
           echo "No lint errors found." >> linting-issues
+      - name: Ensure linting-issues file exists
+        run: |
+          if [ ! -f linting-issues ]; then
+            echo "No lint errors found." > linting-issues
+          fi
       - name: Check for lint errors
         id: lint_check
         run: |
@@ -44,6 +49,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: linting-issues-update
+          base: main
           title: 'chore: update linting-issues with latest lint errors'
           body: 'This PR updates the linting-issues file with the latest lint errors.'
           commit-message: 'chore: update linting-issues with latest lint errors'
