@@ -20,7 +20,8 @@ jobs:
       - name: Run linter and save output
         run: |
           set -o pipefail
-          npm run lint | tee linting-issues
+          npm run lint | tee linting-issues || true
+          echo "No lint errors found." >> linting-issues
       - name: Check for lint errors
         id: lint_check
         run: |
@@ -46,6 +47,11 @@ jobs:
           title: 'chore: update linting-issues with latest lint errors'
           body: 'This PR updates the linting-issues file with the latest lint errors.'
           commit-message: 'chore: update linting-issues with latest lint errors'
+      - name: Fail pipeline if lint errors exist
+        if: steps.lint_check.outputs.has_errors == 'true'
+        run: |
+          echo "Lint errors detected. Failing pipeline after PR creation."
+          exit 1
   test:
     runs-on: ubuntu-latest
     steps:
