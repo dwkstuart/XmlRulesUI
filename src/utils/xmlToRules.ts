@@ -21,7 +21,7 @@ export function xmlToRules(xmlString: string) {
   function convertGroup(group: XmlGroup) {
     const logicRaw = typeof group.logic === 'object' ? group.logic['#text'] : group.logic || 'AND';
     const logic: 'AND' | 'OR' = logicRaw === 'OR' ? 'OR' : 'AND';
-    let children: any[] = [];
+    let children: unknown[] = [];
 
     // Handle <rule> elements (old format)
     if (Array.isArray(group.rule)) {
@@ -32,12 +32,12 @@ export function xmlToRules(xmlString: string) {
 
     // Handle direct rule-type elements (new format)
     for (const type of xmlTypes) {
-      const ruleBlock = group[type.value];
+      const ruleBlock = (group as Record<string, unknown>)[type.value];
       if (ruleBlock) {
         if (Array.isArray(ruleBlock)) {
-          children = children.concat(ruleBlock.map(rb => convertRule({ ...rb, name: type.value })));
+          children = children.concat(ruleBlock.map(rb => convertRule({ ...rb, name: type.value, comparator: '', value: '' })));
         } else {
-          children.push(convertRule({ ...ruleBlock, name: type.value }));
+          children.push(convertRule({ ...ruleBlock, name: type.value, comparator: '', value: '' }));
         }
       }
     }

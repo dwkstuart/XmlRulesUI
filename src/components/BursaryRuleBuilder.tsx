@@ -175,7 +175,7 @@ const BursaryRuleBuilder: React.FC<BursaryRuleBuilderProps> = ({ onXmlChange, in
     } else {
       dispatch(replaceRoot(defaultGroup()));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [initialRules, dispatch]);
   React.useEffect(() => {
     if (onXmlChange) {

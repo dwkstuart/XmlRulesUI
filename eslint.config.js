@@ -3,6 +3,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import reactPlugin from 'eslint-plugin-react';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 const compat = new FlatCompat();
 
@@ -23,12 +24,16 @@ export default [
     plugins: {
       react: reactPlugin,
       '@typescript-eslint': tseslint,
+      'react-hooks': reactHooksPlugin,
     },
     settings: {
       react: {
         version: 'detect',
       },
     },
-    rules: {},
+    rules: {
+      // Add react-hooks/exhaustive-deps rule if plugin is installed
+      'react-hooks/exhaustive-deps': 'warn',
+    },
   },
 ];
