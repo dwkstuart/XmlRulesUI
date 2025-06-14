@@ -14,7 +14,8 @@ import {
   setError,
   clearError,
   replaceRoot,
-  RuleBlock
+  RuleBlock,
+  defaultGroup
 } from '../ruleBuilderSlice';
 import { xmlTypesConst } from '../xmlTypes';
 import XmlOutput from './XmlOutput';
@@ -38,48 +39,45 @@ const GroupBlock: React.FC<{
   const dispatch = useDispatch();
   const [inputError, setInputError] = React.useState<string>('');
 
-  let inputType = 'text';
-  let adornment: string | null = null;
   if (block.type === 'rule') {
+    let inputType = 'text';
+    let adornment: string | null = null;
     if (block.ruleType.value === 'age') inputType = 'number';
     if (block.ruleType.value === 'dob') inputType = 'date';
     if (block.ruleType.value === 'income') {
       inputType = 'number';
       adornment = '£';
     }
-  }
 
-  const validate = (val: string) => {
-    if (block.type !== 'rule') return '';
-    if (block.ruleType.value === 'age') {
-      if (!/^\d+$/.test(val)) return 'Age must be a whole number';
-      if (parseInt(val, 10) < 0) return 'Age must be positive';
-    }
-    if (block.ruleType.value === 'dob') {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return 'Date must be YYYY-MM-DD';
-      const d = new Date(val);
-      if (isNaN(d.getTime())) return 'Invalid date';
-    }
-    if (block.ruleType.value === 'income') {
-      if (!/^\d+(\.\d{1,2})?$/.test(val)) return 'Income must be a number';
-      if (parseFloat(val) < 0) return 'Income must be positive';
-    }
-    return '';
-  };
+    const validate = (val: string) => {
+      if (block.ruleType.value === 'age') {
+        if (!/^[0-9]+$/.test(val)) return 'Age must be a whole number';
+        if (parseInt(val, 10) < 0) return 'Age must be positive';
+      }
+      if (block.ruleType.value === 'dob') {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return 'Date must be YYYY-MM-DD';
+        const d = new Date(val);
+        if (isNaN(d.getTime())) return 'Invalid date';
+      }
+      if (block.ruleType.value === 'income') {
+        if (!/^\d+(\.\d{1,2})?$/.test(val)) return 'Income must be a number';
+        if (parseFloat(val) < 0) return 'Income must be positive';
+      }
+      return '';
+    };
 
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value;
-    let error = '';
-    if (block.ruleType.value === 'income' && val) {
-      const num = Math.round(Number(val));
-      val = isNaN(num) ? val : String(num);
-    }
-    error = validate(val);
-    setInputError(error);
-    dispatch(setValue({ path, value: val }));
-  };
+    const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+      let error = '';
+      if (block.ruleType.value === 'income' && val) {
+        const num = Math.round(Number(val));
+        val = isNaN(num) ? val : String(num);
+      }
+      error = validate(val);
+      setInputError(error);
+      dispatch(setValue({ path, value: val }));
+    };
 
-  if (block.type === 'rule') {
     return (
       <Paper elevation={2} sx={{ p: 2, m: 1, borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
         <Select
@@ -104,16 +102,30 @@ const GroupBlock: React.FC<{
               ))
             : null}
         </Select>
-        <TextField
-          type={inputType}
-          value={block.value}
-          onChange={handleValueChange}
-          size="small"
-          error={!!inputError}
-          helperText={inputError}
-          sx={{ minWidth: 120 }}
-          InputProps={adornment ? { startAdornment: <InputAdornment position="start">{adornment}</InputAdornment> } : undefined}
-        />
+        {/* If the selected type has options (enum), show a dropdown, else show a text field */}
+        {Array.isArray(block.ruleType?.options) ? (
+          <Select
+            value={block.value || ''}
+            onChange={e => dispatch(setValue({ path, value: e.target.value }))}
+            size="small"
+            sx={{ minWidth: 120 }}
+          >
+            {block.ruleType.options.map((opt: { label: string; value: string }) => (
+              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            ))}
+          </Select>
+        ) : (
+          <TextField
+            type={inputType}
+            value={block.value}
+            onChange={handleValueChange}
+            size="small"
+            error={!!inputError}
+            helperText={inputError}
+            sx={{ minWidth: 120 }}
+            InputProps={adornment ? { startAdornment: <InputAdornment position="start">{adornment}</InputAdornment> } : undefined}
+          />
+        )}
         {parent && (
           <Button onClick={() => dispatch(removeBlock({ path: path.slice(0, -1), idx: path[path.length - 1] }))} color="error" variant="outlined" size="small" sx={{ ml: 1 }}>
             Remove Rule

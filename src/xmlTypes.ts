@@ -1,44 +1,27 @@
 // xmlTypes.ts
 // Contains the xmlTypes array and related export for use throughout the app
+// This file is auto-generated from XSD. Do not edit manually.
+
+export enum Color {
+  Red = "Red",
+  Green = "Green",
+  Blue = "Blue"
+}
+
+export interface Item {
+  Name: string;
+  Color: Color;
+}
 
 export const xmlTypes = [
   {
-    label: 'Age',
-    value: 'age',
-    comparators: [
-      { label: 'Equals', value: 'equals' },
-      { label: 'Less Than', value: 'less_than' },
-      { label: 'Greater Than', value: 'greater_than' },
-      { label: 'Between', value: 'between' }
-    ]
-  },
-  {
-    label: 'Date of Birth',
-    value: 'dob',
-    comparators: [
-      { label: 'Before', value: 'before' },
-      { label: 'After', value: 'after' },
-      { label: 'On', value: 'on' },
-      { label: 'Between', value: 'between' }
-    ]
-  },
-  {
-    label: 'Household Income',
-    value: 'income',
-    comparators: [
-      { label: 'Less Than', value: 'less_than' },
-      { label: 'Greater Than', value: 'greater_than' },
-      { label: 'Equals', value: 'equals' },
-      { label: 'Between', value: 'between' }
-    ]
-  },
-  {
-    label: 'Enrolment Status',
-    value: 'enrolment_status',
+    label: 'Color',
+    value: 'color',
     comparators: [
       { label: 'Equals', value: 'equals' },
       { label: 'Not Equals', value: 'not_equals' }
-    ]
+    ],
+    options: Object.values(Color).map(c => ({ label: c, value: c }))
   }
 ];
 
