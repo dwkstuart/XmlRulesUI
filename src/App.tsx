@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import EditBursaryPage from './components/EditBursaryPage';
 import BursaryFormPage from './components/BursaryFormPage';

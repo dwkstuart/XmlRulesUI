@@ -1,9 +1,8 @@
 import React from 'react';
-import { Rule } from '../ruleBuilderSlice';
-import { xmlTypesConst } from '../xmlTypes';
+import { RuleBlock } from '../ruleBuilderSlice';
 
 interface RuleRowProps {
-  rule: Rule;
+  rule: RuleBlock;
   idx: number;
   isLast: boolean;
   logic: string;
@@ -17,32 +16,35 @@ interface RuleRowProps {
 
 const RuleRow: React.FC<RuleRowProps> = ({
   rule, idx, isLast, logic, onTypeChange, onComparatorChange, onValueChange, onRemove, disableRemove, xmlTypes
-}) => (
-  <div style={{ border: '1px solid #ccc', margin: 8, padding: 8, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-    <label>
-      Rule Name:
-      <select value={rule.type.value} onChange={e => onTypeChange(idx, e.target.value)} style={{ marginLeft: 8 }}>
-        {xmlTypes.map(type => (
-          <option key={type.value} value={type.value}>{type.label}</option>
-        ))}
-      </select>
-    </label>
-    <label>
-      Comparator:
-      <select value={rule.comparator.value} onChange={e => onComparatorChange(idx, e.target.value)} style={{ marginLeft: 8 }}>
-        {rule.type.comparators.map((comp: { label: string; value: string }) => (
-          <option key={comp.value} value={comp.value}>{comp.label}</option>
-        ))}
-      </select>
-    </label>
-    <label>
-      Value: <input type="text" value={rule.value} onChange={e => onValueChange(idx, e.target.value)} />
-    </label>
-    <button onClick={() => onRemove(idx)} disabled={disableRemove} style={{ marginLeft: 8 }}>Remove</button>
-    {!isLast && (
-      <span style={{ fontWeight: 'bold', margin: '0 8px' }}>{logic}</span>
-    )}
-  </div>
-);
+}) => {
+  if (rule.type !== 'rule') return null;
+  return (
+    <div style={{ border: '1px solid #ccc', margin: 8, padding: 8, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+      <label>
+        Rule Name:
+        <select value={rule.ruleType.value} onChange={e => onTypeChange(idx, e.target.value)} style={{ marginLeft: 8 }}>
+          {xmlTypes.map(type => (
+            <option key={type.value} value={type.value}>{type.label}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Comparator:
+        <select value={rule.comparator.value} onChange={e => onComparatorChange(idx, e.target.value)} style={{ marginLeft: 8 }}>
+          {rule.ruleType.comparators.map((comp: { label: string; value: string }) => (
+            <option key={comp.value} value={comp.value}>{comp.label}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Value: <input type="text" value={rule.value} onChange={e => onValueChange(idx, e.target.value)} />
+      </label>
+      <button onClick={() => onRemove(idx)} disabled={disableRemove} style={{ marginLeft: 8 }}>Remove</button>
+      {!isLast && (
+        <span style={{ fontWeight: 'bold', margin: '0 8px' }}>{logic}</span>
+      )}
+    </div>
+  );
+};
 
 export default RuleRow;
