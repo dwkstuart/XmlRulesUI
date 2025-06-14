@@ -24,6 +24,11 @@ export default [
       react: reactPlugin,
       '@typescript-eslint': tseslint,
     },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
     rules: {},
   },
 ];

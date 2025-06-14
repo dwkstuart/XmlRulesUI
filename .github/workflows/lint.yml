@@ -20,14 +20,38 @@ jobs:
       - name: Run linter and save output
         run: |
           set -o pipefail
-          npm run lint | tee lint-report.txt
-      - name: Create Issue on Lint Failure
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v4
+          npm run lint | tee linting-issues || true
+          echo "No lint errors found." >> linting-issues
+      - name: Check for lint errors
+        id: lint_check
+        run: |
+          if grep -qE '[^[:space:]]' linting-issues; then
+            echo "::set-output name=has_errors::true"
+          else
+            echo "::set-output name=has_errors::false"
+          fi
+      - name: Commit linting-issues file if errors
+        if: steps.lint_check.outputs.has_errors == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b linting-issues-update || git checkout linting-issues-update
+          git add linting-issues
+          git commit -m "chore: update linting-issues with latest lint errors" || echo "No changes to commit"
+          git push -u origin linting-issues-update || echo "Branch already exists"
+      - name: Create Pull Request for linting-issues
+        if: steps.lint_check.outputs.has_errors == 'true'
+        uses: peter-evans/create-pull-request@v6
         with:
-          title: 'Linting errors detected in CI'
-          content-filepath: lint-report.txt
-          labels: 'lint, automated issue'
+          branch: linting-issues-update
+          title: 'chore: update linting-issues with latest lint errors'
+          body: 'This PR updates the linting-issues file with the latest lint errors.'
+          commit-message: 'chore: update linting-issues with latest lint errors'
+      - name: Fail pipeline if lint errors exist
+        if: steps.lint_check.outputs.has_errors == 'true'
+        run: |
+          echo "Lint errors detected. Failing pipeline after PR creation."
+          exit 1
   test:
     runs-on: ubuntu-latest
     steps:
