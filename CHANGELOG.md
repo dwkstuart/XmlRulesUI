@@ -87,3 +87,9 @@ This file is generated and updated automatically by the changelog workflow.
 
 
 
+## 0.1.0 (2025-06-18)
+
+* added locally runnable database server ([9231d6f](https://github.com/dwkstuart/XmlRulesUI/commit/9231d6f))
+
+
+
